@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import tn.esprit.spring.entities.User;
@@ -15,7 +16,7 @@ import tn.esprit.spring.services.IUserService;
 public class UserRestControl {
 
 	@Autowired 
-	IUserService userService; 
+	IUserService userService;
 
 	
 	// URL : http://localhost:????/????/????/retrieve-all-users
@@ -50,10 +51,22 @@ public class UserRestControl {
 
 	// Modifier User 
 	// http://localhost:????/timesheet-devops/modify-user 
-	@PutMapping("/modify-user") 
+	@PutMapping("/modify-user")
 	public User updateUser(@RequestBody User user) {
 		return userService.updateUser(user);
 	}
-	 
+
+	
+	// update user par id
+	@PutMapping("/modify-user/{id}")
+	public ResponseEntity<User> updateUserById(@PathVariable String id, @RequestBody User userDetails) {
+		User existingUser = userService.retrieveUser(id);
+		if (existingUser == null) {
+			return ResponseEntity.notFound().build();
+		}
+
+		User updatedUser = userService.updateUser(userDetails);
+		return ResponseEntity.ok(updatedUser);
+	}
 } 
  
